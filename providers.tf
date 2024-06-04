@@ -1,4 +1,3 @@
 provider "aws" {
-#   region = locals.region
-    region = "us-east-1"
+  region = local.region
 }
