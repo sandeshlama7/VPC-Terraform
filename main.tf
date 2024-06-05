@@ -22,53 +22,73 @@ resource "aws_subnet" "subnets" {
 
 ## INTERNET GATEWAY
 resource "aws_internet_gateway" "IGW" {
-    vpc_id = aws_vpc.vpc-sandesh.id
-    tags = {
-      Name = "IGW-Terra-Sandesh"
-      owner = var.owner_tag
-    }
+  vpc_id = aws_vpc.vpc-sandesh.id
+  tags = {
+    Name  = "IGW-Terra-Sandesh"
+    owner = var.owner_tag
+  }
+}
+
+## NAT GATEWAY
+resource "aws_eip" "eIP" {
+  domain = "vpc"
+  tags = {
+    Name = "eIP-Sandesh"
+  }
+}
+
+resource "aws_nat_gateway" "NAT" {
+  subnet_id     = aws_subnet.subnets["public-subnet-1a"].id
+  allocation_id = aws_eip.eIP.id
+  tags = {
+    Name = "NAT-Sandesh"
+  }
 }
 
 #PUBLIC Route Table
 resource "aws_route_table" "public-route-table" {
-    vpc_id = aws_vpc.vpc-sandesh.id
+  vpc_id = aws_vpc.vpc-sandesh.id
 
-    route {
-        cidr_block = "0.0.0.0/0"
-        gateway_id = aws_internet_gateway.IGW.id
-    }
-    tags = {
-      Name = "Public-Subnet-RT"
-    }
-    }
+  route  {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.IGW.id
+  }
+  tags = {
+    Name = "Public-Subnet-RT"
+  }
+}
 
 ##PRIVATE ROUTE TABLE
 resource "aws_route_table" "private-route-table" {
-    vpc_id = aws_vpc.vpc-sandesh.id
-    tags = {
-      Name = "Private-Subnet-RT"
-    }
+  vpc_id = aws_vpc.vpc-sandesh.id
+  route  {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.NAT.id
+  }
+  tags = {
+    Name = "Private-Subnet-RT"
+  }
 }
 
 ##ROUTE TABLE ASSOCIATION TO SUBNETS
 resource "aws_route_table_association" "public_subnet_association1" {
-#   subnet_id = var.public_subnet_1a_id
-    subnet_id = aws_subnet.subnets["public-subnet-1a"].id
+  #   subnet_id = var.public_subnet_1a_id
+  subnet_id      = aws_subnet.subnets["public-subnet-1a"].id
   route_table_id = aws_route_table.public-route-table.id
 }
 resource "aws_route_table_association" "public_subnet_association2" {
-#   subnet_id = var.public_subnet_1b_id
-subnet_id = aws_subnet.subnets["public-subnet-1b"].id
+  #   subnet_id = var.public_subnet_1b_id
+  subnet_id      = aws_subnet.subnets["public-subnet-1b"].id
   route_table_id = aws_route_table.public-route-table.id
 }
 
 resource "aws_route_table_association" "private_subnet_association1" {
-#   subnet_id = var.private_subnet_1a_id
-subnet_id = aws_subnet.subnets["private-subnet-1a"].id
+  #   subnet_id = var.private_subnet_1a_id
+  subnet_id      = aws_subnet.subnets["private-subnet-1a"].id
   route_table_id = aws_route_table.private-route-table.id
 }
 resource "aws_route_table_association" "private_subnet_association2" {
-#   subnet_id = var.private_subnet_1b_id
-subnet_id = aws_subnet.subnets["private-subnet-1b"].id
+  #   subnet_id = var.private_subnet_1b_id
+  subnet_id      = aws_subnet.subnets["private-subnet-1b"].id
   route_table_id = aws_route_table.private-route-table.id
 }
