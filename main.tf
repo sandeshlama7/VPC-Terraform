@@ -1,6 +1,6 @@
 ## VPC
 resource "aws_vpc" "vpc-sandesh" {
-  cidr_block = var.vpc_cidr
+  cidr_block = local.vpc_cidr
   tags = {
     Name  = "vpc-terraform-sandesh"
     owner = var.owner_tag
@@ -105,23 +105,19 @@ resource "aws_route_table" "private-route-table" {
 
 ##ROUTE TABLE ASSOCIATION TO SUBNETS
 resource "aws_route_table_association" "public_subnet_association1" {
-  #   subnet_id = var.public_subnet_1a_id
   subnet_id      = aws_subnet.subnets["public-subnet-1a"].id
   route_table_id = aws_route_table.public-route-table.id
 }
 resource "aws_route_table_association" "public_subnet_association2" {
-  #   subnet_id = var.public_subnet_1b_id
   subnet_id      = aws_subnet.subnets["public-subnet-1b"].id
   route_table_id = aws_route_table.public-route-table.id
 }
 
 resource "aws_route_table_association" "private_subnet_association1" {
-  #   subnet_id = var.private_subnet_1a_id
   subnet_id      = aws_subnet.subnets["private-subnet-1a"].id
   route_table_id = aws_route_table.private-route-table.id
 }
 resource "aws_route_table_association" "private_subnet_association2" {
-  #   subnet_id = var.private_subnet_1b_id
   subnet_id      = aws_subnet.subnets["private-subnet-1b"].id
   route_table_id = aws_route_table.private-route-table.id
 }
