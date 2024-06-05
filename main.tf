@@ -20,6 +20,39 @@ resource "aws_subnet" "subnets" {
   }
 }
 
+# VPC-SECURITY-GROUP
+resource "aws_security_group" "sg-vpc" {
+  name = "Sg-VPC-Terraform-Sandesh"
+  description = "Security Group For The VPC"
+  vpc_id = aws_vpc.vpc-sandesh.id
+  tags = {
+    Name = "SG-VPC"
+  }
+
+  ingress {
+    description = "Allow HTTP"
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 80
+    protocol = "tcp"
+    to_port = 80
+  }
+  ingress {
+    description = "Allow HTTPS"
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+  }
+
+  egress {
+    description = "Outbound Rules to Allow All Outbound"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+}
+
 ## INTERNET GATEWAY
 resource "aws_internet_gateway" "IGW" {
   vpc_id = aws_vpc.vpc-sandesh.id
