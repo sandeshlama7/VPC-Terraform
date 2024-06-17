@@ -1,4 +1,6 @@
 locals {
   region = "us-east-1"
-  vpc_cidr = "10.0.0.0/16"
+  vpc = var.vpc
+  subnets-conf = var.subnets-conf
+  ec2 = var.ec2
 }

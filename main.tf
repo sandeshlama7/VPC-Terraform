@@ -1,9 +1,8 @@
 ## VPC
 resource "aws_vpc" "vpc-sandesh" {
-  cidr_block = local.vpc_cidr
+  cidr_block = local.vpc.vpc_cidr
   tags = {
-    Name  = "vpc-terraform-sandesh"
-    owner = var.owner_tag
+    Name  = local.vpc.name
   }
 }
 
@@ -16,7 +15,6 @@ resource "aws_subnet" "subnets" {
   availability_zone = each.value.az
   tags = {
     Name  = each.key
-    owner = var.owner_tag
   }
 }
 
@@ -58,7 +56,6 @@ resource "aws_internet_gateway" "IGW" {
   vpc_id = aws_vpc.vpc-sandesh.id
   tags = {
     Name  = "IGW-Terra-Sandesh"
-    owner = var.owner_tag
   }
 }
 

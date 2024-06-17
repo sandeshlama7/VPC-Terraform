@@ -65,24 +65,19 @@ data "aws_iam_instance_profile" "IAM-Role" {
 }
 
 resource "aws_instance" "public-instance" {
-    ami = "ami-00beae93a2d981137"
-    instance_type = "t2.micro"
+    ami = local.ec2.ami
+    instance_type = local.ec2.instance-type
     subnet_id = aws_subnet.subnets["public-subnet-1a"].id
     security_groups = [aws_security_group.SG-Public.id]
     iam_instance_profile = data.aws_iam_instance_profile.IAM-Role.name
     associate_public_ip_address = "true"
     tags = {
         Name = "Public-EC2"
-        owner = var.owner_tag
         project = "ec2-creation"
-        silo = "intern"
-        terraform = "true"
     }
     user_data = base64encode("${templatefile("userdata/public.sh", {
         PRIVATE_SERVER_IP   = aws_instance.private-instance.private_ip
     })}")
-
-    # user_data = file("userdata/public.sh")
 }
 
 resource "aws_instance" "private-instance" {
@@ -94,10 +89,7 @@ resource "aws_instance" "private-instance" {
 
     tags = {
         Name = "Private-EC2"
-        owner = var.owner_tag
         project = "ec2-creation"
-        silo = "intern"
-        terraform = "true"
     }
     user_data = file("userdata/priv.sh")
 }
