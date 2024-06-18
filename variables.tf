@@ -8,10 +8,10 @@ variable "subnets-conf" {
 
 variable "vpc" {
   description = "VPC Info"
-  type = map(string)
+  type        = map(string)
 }
 
 variable "ec2" {
   description = "Instance Info"
-  type = map(string)
+  type        = map(string)
 }

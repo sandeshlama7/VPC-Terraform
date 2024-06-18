@@ -2,7 +2,7 @@
 resource "aws_vpc" "vpc-sandesh" {
   cidr_block = local.vpc.vpc_cidr
   tags = {
-    Name  = local.vpc.name
+    Name = local.vpc.name
   }
 }
 
@@ -14,15 +14,15 @@ resource "aws_subnet" "subnets" {
   cidr_block        = each.value.cidr
   availability_zone = each.value.az
   tags = {
-    Name  = each.key
+    Name = each.key
   }
 }
 
 # VPC-SECURITY-GROUP
 resource "aws_security_group" "sg-vpc" {
-  name = "Sg-VPC-Terraform-Sandesh"
+  name        = "Sg-VPC-Terraform-Sandesh"
   description = "Security Group For The VPC"
-  vpc_id = aws_vpc.vpc-sandesh.id
+  vpc_id      = aws_vpc.vpc-sandesh.id
   tags = {
     Name = "SG-VPC"
   }
@@ -30,24 +30,24 @@ resource "aws_security_group" "sg-vpc" {
   ingress {
     description = "Allow HTTP"
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 80
-    protocol = "tcp"
-    to_port = 80
+    from_port   = 80
+    protocol    = "tcp"
+    to_port     = 80
   }
   ingress {
     description = "Allow HTTPS"
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
   }
 
   egress {
     description = "Outbound Rules to Allow All Outbound"
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_security_group" "sg-vpc" {
 resource "aws_internet_gateway" "IGW" {
   vpc_id = aws_vpc.vpc-sandesh.id
   tags = {
-    Name  = "IGW-Terra-Sandesh"
+    Name = "IGW-Terra-Sandesh"
   }
 }
 
@@ -79,7 +79,7 @@ resource "aws_nat_gateway" "NAT" {
 resource "aws_route_table" "public-route-table" {
   vpc_id = aws_vpc.vpc-sandesh.id
 
-  route  {
+  route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.IGW.id
   }
@@ -91,7 +91,7 @@ resource "aws_route_table" "public-route-table" {
 ##PRIVATE ROUTE TABLE
 resource "aws_route_table" "private-route-table" {
   vpc_id = aws_vpc.vpc-sandesh.id
-  route  {
+  route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.NAT.id
   }
